@@ -109,6 +109,11 @@ struct Variables_t
 	C_ADD_VARIABLE(ColorPickerVar_t, colAccent1, ColorPickerVar_t(100, 105, 175)); // (dark)
 	C_ADD_VARIABLE(ColorPickerVar_t, colAccent2, ColorPickerVar_t(115, 120, 190)); // (darker)
 #pragma endregion
+
+#pragma region variables_inspect
+	C_ADD_VARIABLE(unsigned int, nZoomIn, VK_UP);
+	C_ADD_VARIABLE(unsigned int, nZoomOut, VK_DOWN);
+#pragma endregion
 };
 
 inline Variables_t Vars = {};

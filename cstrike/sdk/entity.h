@@ -103,6 +103,8 @@ public:
 
 	SCHEMA_ADD_FIELD(Vector_t, GetAbsOrigin, "CGameSceneNode->m_vecAbsOrigin");
 	SCHEMA_ADD_FIELD(Vector_t, GetRenderOrigin, "CGameSceneNode->m_vRenderOrigin");
+	SCHEMA_ADD_FIELD(float, GetScale, "CGameSceneNode->m_flScale");
+	SCHEMA_ADD_FIELD(bool, GetDebugAbsOriginChanges, "CGameSceneNode->m_bDebugAbsOriginChanges");
 
 	SCHEMA_ADD_FIELD(QAngle_t, GetAngleRotation, "CGameSceneNode->m_angRotation");
 	SCHEMA_ADD_FIELD(QAngle_t, GetAbsAngleRotation, "CGameSceneNode->m_angAbsRotation");
@@ -404,5 +406,16 @@ public:
 class CSkeletonInstance : public CGameSceneNode
 {
 public:
+	CS_CLASS_NO_INITIALIZER(CSkeletonInstance);
 
+	SCHEMA_ADD_FIELD(bool, IsAnimationEnabled, "CSkeletonInstance->m_bIsAnimationEnabled");
+	SCHEMA_ADD_FIELD(bool, IsUseParentRenderBounds, "CSkeletonInstance->m_bUseParentRenderBounds");
+};
+
+class CBodyComponentSkeletonInstance
+{
+public:
+	CS_CLASS_NO_INITIALIZER(CBodyComponentSkeletonInstance);
+
+	SCHEMA_ADD_PFIELD(CSkeletonInstance, GetCSkeletonInstance, "CBodyComponentSkeletonInstance->m_skeletonInstance");
 };

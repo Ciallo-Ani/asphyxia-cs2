@@ -37,6 +37,8 @@
 // used: menu
 #include "menu.h"
 
+Vector_t* g_Origin = nullptr;
+
 bool H::Setup()
 {
 	if (MH_Initialize() != MH_OK)
@@ -121,6 +123,10 @@ bool H::Setup()
 		return false;
 	L_PRINT(LOG_INFO) << CS_XOR("\"DrawObject\" hook has been created");
 
+	if (!hkRotatePreviewItem.Create(MEM::FindPattern(CLIENT_DLL, CS_XOR("48 89 5C 24 10 48 89 74 24 18 57 48 83 EC 70 48 8B DA")), reinterpret_cast<void*>(&OnRotateInspectItem)))
+		return false;
+	L_PRINT(LOG_INFO) << CS_XOR("\"RotatePreviewItem\" hook has been created");
+
 	return true;
 }
 
@@ -172,6 +178,18 @@ HRESULT __stdcall H::CreateSwapChain(IDXGIFactory* pFactory, IUnknown* pDevice, 
 
 long H::WndProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
 {
+	if (g_Origin)
+	{
+		if (IPT::IsKeyReleased(C_GET(unsigned int, Vars.nZoomIn)))
+		{
+			g_Origin->x += 3.0;
+		}
+		else if (IPT::IsKeyReleased(C_GET(unsigned int, Vars.nZoomOut)))
+		{
+			g_Origin->x -= 3.0;
+		}
+	}
+
 	if (D::OnWndProc(hWnd, uMsg, wParam, lParam))
 		return 1L;
 
@@ -270,4 +288,20 @@ void CS_FASTCALL H::DrawObject(void* pAnimatableSceneObjectDesc, void* pDx11, CM
 
 	if (!F::OnDrawObject(pAnimatableSceneObjectDesc, pDx11, arrMeshDraw, nDataCount, pSceneView, pSceneLayer, pUnk, pUnk2))
 		oDrawObject(pAnimatableSceneObjectDesc, pDx11, arrMeshDraw, nDataCount, pSceneView, pSceneLayer, pUnk, pUnk2);
+}
+
+bool CS_FASTCALL H::OnRotateInspectItem(CSkeletonInstance* item, QAngle_t* ang)
+{
+	const auto trampoline = hkRotatePreviewItem.GetOriginal();
+	auto ret = trampoline(item, ang);
+	auto& enabled = item->IsAnimationEnabled();
+	auto& IsUseParentRenderBounds = item->IsUseParentRenderBounds();
+	auto& scale = item->GetScale();
+	auto& origin = item->GetAbsOrigin();
+	g_Origin = &origin;
+	auto& renderOrigin = item->GetRenderOrigin();
+	auto& bDebugedOrigin = item->GetDebugAbsOriginChanges();
+	bDebugedOrigin = true;
+
+	return ret;
 }
