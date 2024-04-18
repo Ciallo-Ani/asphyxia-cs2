@@ -5,6 +5,9 @@
 #pragma region variables_combo_entries
 using VisualOverlayBox_t = int;
 
+#define VK_MOUSE_SCROLL_UP 0x1145
+#define VK_MOUSE_SCROLL_DOWN 0x1919
+
 enum EVisualOverlayBox : VisualOverlayBox_t
 {
 	VISUAL_OVERLAY_BOX_NONE = 0,
@@ -113,6 +116,10 @@ struct Variables_t
 #pragma region variables_inspect
 	C_ADD_VARIABLE(unsigned int, nZoomIn, VK_UP);
 	C_ADD_VARIABLE(unsigned int, nZoomOut, VK_DOWN);
+	C_ADD_VARIABLE(unsigned int, nMoveLeft, VK_LEFT);
+	C_ADD_VARIABLE(unsigned int, nMoveRight, VK_RIGHT);
+	C_ADD_VARIABLE(unsigned int, nMouseZoomIn, VK_MOUSE_SCROLL_DOWN);
+	C_ADD_VARIABLE(unsigned int, nMouseZoomOut, VK_MOUSE_SCROLL_UP);
 #pragma endregion
 };
 

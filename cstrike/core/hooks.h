@@ -70,7 +70,8 @@ namespace H
 	__int64 CS_FASTCALL LevelShutdown(void* pClientModeShared);
 	void CS_FASTCALL OverrideView(void* pClientModeCSNormal, CViewSetup* pSetup);
 	void CS_FASTCALL DrawObject(void* pAnimatableSceneObjectDesc, void* pDx11, CMeshData* arrMeshDraw, int nDataCount, void* pSceneView, void* pSceneLayer, void* pUnk, void* pUnk2);
-	bool CS_FASTCALL OnRotateInspectItem(CSkeletonInstance* item, QAngle_t* ang);
+	//bool CS_FASTCALL OnRotateInspectItem(CSkeletonInstance* item, QAngle_t* ang);
+	void* CS_FASTCALL OnRotateInspectItemPre(void* panel);
 
 	/* @section: managers */
 	inline CBaseHookObject<decltype(&Present)> hkPresent = {};
@@ -87,5 +88,6 @@ namespace H
 	inline CBaseHookObject<decltype(&OverrideView)> hkOverrideView = {};
 
 	inline CBaseHookObject<decltype(&DrawObject)> hkDrawObject = {};
-	inline CBaseHookObject<decltype(&OnRotateInspectItem)> hkRotatePreviewItem = {};
+	//inline CBaseHookObject<decltype(&OnRotateInspectItem)> hkRotatePreviewItem = {};
+	inline CBaseHookObject<decltype(&OnRotateInspectItemPre)> hkRotatePreviewItemPre = {};
 }

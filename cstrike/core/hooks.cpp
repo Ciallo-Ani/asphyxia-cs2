@@ -37,7 +37,7 @@
 // used: menu
 #include "menu.h"
 
-Vector_t* g_Origin = nullptr;
+VectorAligned_t* g_Origin = nullptr;
 
 bool H::Setup()
 {
@@ -123,9 +123,13 @@ bool H::Setup()
 		return false;
 	L_PRINT(LOG_INFO) << CS_XOR("\"DrawObject\" hook has been created");
 
-	if (!hkRotatePreviewItem.Create(MEM::FindPattern(CLIENT_DLL, CS_XOR("48 89 5C 24 10 48 89 74 24 18 57 48 83 EC 70 48 8B DA")), reinterpret_cast<void*>(&OnRotateInspectItem)))
+	/*if (!hkRotatePreviewItem.Create(MEM::FindPattern(CLIENT_DLL, CS_XOR("48 89 5C 24 10 48 89 74 24 18 57 48 83 EC 70 48 8B DA")), reinterpret_cast<void*>(&OnRotateInspectItem)))
 		return false;
-	L_PRINT(LOG_INFO) << CS_XOR("\"RotatePreviewItem\" hook has been created");
+	L_PRINT(LOG_INFO) << CS_XOR("\"RotatePreviewItem\" hook has been created");*/
+
+	if (!hkRotatePreviewItemPre.Create(MEM::FindPattern(CLIENT_DLL, CS_XOR("48 89 5C 24 18 55 56 57 41 56 41 57 48 81 EC 10 01 00 00")), reinterpret_cast<void*>(&OnRotateInspectItemPre)))
+		return false;
+	L_PRINT(LOG_INFO) << CS_XOR("\"RotatePreviewItemPre\" hook has been created");
 
 	return true;
 }
@@ -180,13 +184,21 @@ long H::WndProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
 {
 	if (g_Origin)
 	{
-		if (IPT::IsKeyReleased(C_GET(unsigned int, Vars.nZoomIn)))
+		if (IPT::IsKeyDown(C_GET(unsigned int, Vars.nZoomIn))/* ||  GetKeyState(VK_UP) & 0x8000*/)
 		{
-			g_Origin->x += 3.0;
+			g_Origin->x -= 1.0;
 		}
-		else if (IPT::IsKeyReleased(C_GET(unsigned int, Vars.nZoomOut)))
+		else if (IPT::IsKeyDown(C_GET(unsigned int, Vars.nZoomOut))/* ||  GetKeyState(VK_DOWN) & 0x8000*/)
 		{
-			g_Origin->x -= 3.0;
+			g_Origin->x += 1.0;
+		}
+		else if (IPT::IsKeyDown(C_GET(unsigned int, Vars.nMoveLeft)) || GetKeyState(Vars.nMoveLeft) & 0x8000)
+		{
+			g_Origin->y -= 1.0;
+		}
+		else if (IPT::IsKeyDown(C_GET(unsigned int, Vars.nMoveRight)) || GetKeyState(Vars.nMoveRight) & 0x8000)
+		{
+			g_Origin->y += 1.0;
 		}
 	}
 
@@ -290,18 +302,46 @@ void CS_FASTCALL H::DrawObject(void* pAnimatableSceneObjectDesc, void* pDx11, CM
 		oDrawObject(pAnimatableSceneObjectDesc, pDx11, arrMeshDraw, nDataCount, pSceneView, pSceneLayer, pUnk, pUnk2);
 }
 
-bool CS_FASTCALL H::OnRotateInspectItem(CSkeletonInstance* item, QAngle_t* ang)
-{
-	const auto trampoline = hkRotatePreviewItem.GetOriginal();
-	auto ret = trampoline(item, ang);
-	auto& enabled = item->IsAnimationEnabled();
-	auto& IsUseParentRenderBounds = item->IsUseParentRenderBounds();
-	auto& scale = item->GetScale();
-	auto& origin = item->GetAbsOrigin();
-	g_Origin = &origin;
-	auto& renderOrigin = item->GetRenderOrigin();
-	auto& bDebugedOrigin = item->GetDebugAbsOriginChanges();
-	bDebugedOrigin = true;
+//bool CS_FASTCALL H::OnRotateInspectItem(CSkeletonInstance* item, QAngle_t* ang)
+//{
+//	const auto trampoline = hkRotatePreviewItem.GetOriginal();
+//	auto ret = trampoline(item, ang);
+//	
+//
+//	return trampoline(item, ang);
+//}
 
-	return ret;
+void* CS_FASTCALL H::OnRotateInspectItemPre(void* panel)
+{
+	void* v5 = *(void**)((char*)panel + 2176);
+	bool* isMouseClicking = (bool*)((char*)panel + 1953);
+	//*isMouseClicking = true;
+
+	void* v7 = (void*)((char*)v5 + 80);
+	float* nextTick = (float*)((char*)v7 - 16);
+	*nextTick = 0.0;
+	float* nextTick2 = (float*)((char*)v7 + 16);
+	float* time = (float*)((char*)v7 + 20);
+	float* ang_x = (float*)((char*)v7 - 12);
+	float origin_x = *ang_x;
+	*ang_x = origin_x + 0.00001;
+
+	float* ang_y = (float*)((char*)v7 - 8);
+	float origin_y = *ang_y;
+	*ang_y = origin_y + 0.00001;
+
+	C_BaseEntity* entity = *(C_BaseEntity**)v5;
+	CGameSceneNode* item = entity->GetGameSceneNode();
+	auto& node = item->GetNodeToWorld();
+	auto& vec = node.vecPosition;
+	g_Origin = &vec;
+
+	const auto trampoline = hkRotatePreviewItemPre.GetOriginal();
+	//auto ret = trampoline(panel, a2, a3);
+	/**ang_x = origin_x;
+	*ang_y = origin_y;*/
+
+	return trampoline(panel);
 }
+
+
