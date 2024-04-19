@@ -306,6 +306,9 @@
     <ClInclude Include="utilities\pe64.h">
       <Filter>utilities</Filter>
     </ClInclude>
+    <ClInclude Include="utilities\patches.h">
+      <Filter>utilities</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\dependencies\imgui\imgui.cpp">
@@ -413,6 +416,9 @@
       <Filter>utilities</Filter>
     </ClCompile>
     <ClCompile Include="utilities\notify.cpp">
+      <Filter>utilities</Filter>
+    </ClCompile>
+    <ClCompile Include="utilities\patches.cpp">
       <Filter>utilities</Filter>
     </ClCompile>
   </ItemGroup>

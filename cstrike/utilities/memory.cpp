@@ -40,6 +40,9 @@ bool MEM::Setup()
 	fnCreateMaterial = reinterpret_cast<decltype(fnCreateMaterial)>(FindPattern(MATERIAL_SYSTEM2_DLL, CS_XOR("48 89 5C 24 ? 48 89 6C 24 ? 56 57 41 56 48 81 EC ? ? ? ? 48 8B 05")));
 	bSuccess &= (fnCreateMaterial != nullptr);
 
+	fnRotateInspectItem = reinterpret_cast<decltype(fnRotateInspectItem)>(FindPattern(CLIENT_DLL, CS_XOR("48 89 5C 24 10 48 89 74 24 18 57 48 83 EC 70 48 8B DA")));
+	bSuccess &= (fnRotateInspectItem != nullptr);
+
 	return bSuccess;
 }
 
@@ -495,6 +498,12 @@ std::size_t MEM::BytesToPattern(const std::uint8_t* pByteBuffer, const std::size
 	*--szCurrentPattern = '\0';
 
 	return szCurrentPattern - szOutBuffer;
+}
+
+bool MEM::SetMemAccess(void* addr, size_t len, int access)
+{
+	DWORD tmp;
+	return VirtualProtect(addr, len, access, &tmp);
 }
 
 #pragma endregion

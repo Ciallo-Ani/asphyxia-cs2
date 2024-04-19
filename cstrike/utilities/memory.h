@@ -135,6 +135,8 @@ namespace MEM
 	/// @param[out] szOutBuffer output for converted pattern
 	/// @returns: length of the converted ida-style pattern, not including the terminating null
 	std::size_t BytesToPattern(const std::uint8_t* pByteBuffer, const std::size_t nByteCount, char* szOutBuffer);
+
+	bool SetMemAccess(void* addr, size_t len, int access);
 	
 	/* @section: game exports */
 	inline unsigned long(CS_STDCALL* fnUnDecorateSymbolName)(const char* szName, char* pszOutput, unsigned long nMaxStringLength, unsigned long dwFlags) = nullptr;
@@ -146,4 +148,5 @@ namespace MEM
 	inline int(CS_STDCALL* fnWarpMouseInWindow)(void*, float, float) = nullptr;
 	inline bool(CS_FASTCALL* fnLoadKV3)(CKeyValues3*, void*, const char*, const KV3ID_t*, const char*);
 	inline std::int64_t(CS_FASTCALL* fnCreateMaterial)(void*, void*, const char*, void*, unsigned int, unsigned int);
+	inline bool(CS_FASTCALL* fnRotateInspectItem)(void*, void*);
 }

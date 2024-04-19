@@ -206,6 +206,7 @@
     <ClInclude Include="utilities\math.h" />
     <ClInclude Include="utilities\memory.h" />
     <ClInclude Include="utilities\notify.h" />
+    <ClInclude Include="utilities\patches.h" />
     <ClInclude Include="utilities\pe64.h" />
   </ItemGroup>
   <ItemGroup>
@@ -246,6 +247,7 @@
     <ClCompile Include="utilities\math.cpp" />
     <ClCompile Include="utilities\memory.cpp" />
     <ClCompile Include="utilities\notify.cpp" />
+    <ClCompile Include="utilities\patches.cpp" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

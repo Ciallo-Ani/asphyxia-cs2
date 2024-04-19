@@ -184,22 +184,22 @@ long H::WndProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
 {
 	if (g_Origin)
 	{
-		if (IPT::IsKeyDown(C_GET(unsigned int, Vars.nZoomIn))/* ||  GetKeyState(VK_UP) & 0x8000*/)
-		{
-			g_Origin->x -= 1.0;
-		}
-		else if (IPT::IsKeyDown(C_GET(unsigned int, Vars.nZoomOut))/* ||  GetKeyState(VK_DOWN) & 0x8000*/)
-		{
-			g_Origin->x += 1.0;
-		}
-		else if (IPT::IsKeyDown(C_GET(unsigned int, Vars.nMoveLeft)) || GetKeyState(Vars.nMoveLeft) & 0x8000)
-		{
-			g_Origin->y -= 1.0;
-		}
-		else if (IPT::IsKeyDown(C_GET(unsigned int, Vars.nMoveRight)) || GetKeyState(Vars.nMoveRight) & 0x8000)
-		{
-			g_Origin->y += 1.0;
-		}
+		//if (IPT::IsKeyDown(C_GET(unsigned int, Vars.nZoomIn))/* ||  GetKeyState(VK_UP) & 0x8000*/)
+		//{
+		//	g_Origin->x -= 1.0;
+		//}
+		//else if (IPT::IsKeyDown(C_GET(unsigned int, Vars.nZoomOut))/* ||  GetKeyState(VK_DOWN) & 0x8000*/)
+		//{
+		//	g_Origin->x += 1.0;
+		//}
+		//else if (IPT::IsKeyDown(C_GET(unsigned int, Vars.nMoveLeft)) || GetKeyState(Vars.nMoveLeft) & 0x8000)
+		//{
+		//	g_Origin->y -= 1.0;
+		//}
+		//else if (IPT::IsKeyDown(C_GET(unsigned int, Vars.nMoveRight)) || GetKeyState(Vars.nMoveRight) & 0x8000)
+		//{
+		//	g_Origin->y += 1.0;
+		//}
 	}
 
 	if (D::OnWndProc(hWnd, uMsg, wParam, lParam))
@@ -302,20 +302,22 @@ void CS_FASTCALL H::DrawObject(void* pAnimatableSceneObjectDesc, void* pDx11, CM
 		oDrawObject(pAnimatableSceneObjectDesc, pDx11, arrMeshDraw, nDataCount, pSceneView, pSceneLayer, pUnk, pUnk2);
 }
 
-//bool CS_FASTCALL H::OnRotateInspectItem(CSkeletonInstance* item, QAngle_t* ang)
-//{
-//	const auto trampoline = hkRotatePreviewItem.GetOriginal();
-//	auto ret = trampoline(item, ang);
-//	
-//
-//	return trampoline(item, ang);
-//}
+bool CS_FASTCALL H::OnRotateInspectItem(CSkeletonInstance* item, QAngle_t* ang)
+{
+	const auto trampoline = hkRotatePreviewItem.GetOriginal();
+	//auto ret = trampoline(item, ang);
+	
+
+	return trampoline(item, ang);
+}
 
 void* CS_FASTCALL H::OnRotateInspectItemPre(void* panel)
 {
 	void* v5 = *(void**)((char*)panel + 2176);
 	bool* isMouseClicking = (bool*)((char*)panel + 1953);
 	//*isMouseClicking = true;
+	bool* unk1 = (bool*)((char*)panel + 2024);
+	bool* unk2 = (bool*)((char*)panel + 2025);
 
 	void* v7 = (void*)((char*)v5 + 80);
 	float* nextTick = (float*)((char*)v7 - 16);
@@ -323,18 +325,35 @@ void* CS_FASTCALL H::OnRotateInspectItemPre(void* panel)
 	float* nextTick2 = (float*)((char*)v7 + 16);
 	float* time = (float*)((char*)v7 + 20);
 	float* ang_x = (float*)((char*)v7 - 12);
-	float origin_x = *ang_x;
-	*ang_x = origin_x + 0.00001;
-
 	float* ang_y = (float*)((char*)v7 - 8);
-	float origin_y = *ang_y;
-	*ang_y = origin_y + 0.00001;
+	float* mouse_x = (float*)((char*)v7 - 56);
+	float* mouse_y = (float*)((char*)v7 - 52);
 
 	C_BaseEntity* entity = *(C_BaseEntity**)v5;
 	CGameSceneNode* item = entity->GetGameSceneNode();
 	auto& node = item->GetNodeToWorld();
 	auto& vec = node.vecPosition;
-	g_Origin = &vec;
+	auto& origin = item->GetAbsOrigin();
+
+	if (GetKeyState(VK_UP) & 0x8000)
+	{
+		vec.x -= 1.0;
+		origin.x -= 1.0;
+	}
+	else if (GetKeyState(VK_DOWN) & 0x8000)
+	{
+		vec.x += 1.0;
+		origin.x += 1.0;
+	}
+	else if (GetKeyState(VK_LEFT) & 0x8000)
+	{
+		vec.y -= 1.0;
+	}
+	else if (GetKeyState(VK_RIGHT) & 0x8000)
+	{
+		vec.y += 1.0;
+	}
+	//MEM::fnRotateInspectItem(item, &item->GetAbsAngleRotation());
 
 	const auto trampoline = hkRotatePreviewItemPre.GetOriginal();
 	//auto ret = trampoline(panel, a2, a3);

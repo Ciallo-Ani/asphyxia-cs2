@@ -34,6 +34,8 @@
 // used: product version
 #include "sdk/interfaces/iengineclient.h"
 
+#include "utilities/patches.h"
+
 bool CORE::GetWorkingPath(wchar_t* wszDestination)
 {
 	const wchar_t* wszModuleName = MEM::GetModuleBaseFileName(static_cast<HMODULE>(hDll), true);
@@ -165,6 +167,13 @@ static bool Setup(HMODULE hModule)
 		return false;
 	}
 	L_PRINT(LOG_NONE) << CS_XOR("hooks initialization completed");
+
+	if (!PATCH::SetupPatches())
+	{
+		CS_ASSERT(false); // failed to setup hooks
+		return false;
+	}
+	L_PRINT(LOG_NONE) << CS_XOR("patches initialization completed");
 
 	// setup values to save/load cheat variables into/from files and load default configuration
 	if (!C::Setup(CS_XOR(CS_CONFIGURATION_DEFAULT_FILE_NAME)))
