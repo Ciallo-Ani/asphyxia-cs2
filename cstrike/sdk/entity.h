@@ -101,6 +101,9 @@ public:
 	SCHEMA_ADD_FIELD(CTransform, GetNodeToWorld, "CGameSceneNode->m_nodeToWorld");
 	SCHEMA_ADD_FIELD(CEntityInstance*, GetOwner, "CGameSceneNode->m_pOwner");
 
+	SCHEMA_ADD_FIELD(CGameSceneNode*, GetParent, "CGameSceneNode->m_pParent");
+	SCHEMA_ADD_FIELD(CGameSceneNode*, GetChild, "CGameSceneNode->m_pChild");
+
 	SCHEMA_ADD_FIELD(Vector_t, GetAbsOrigin, "CGameSceneNode->m_vecAbsOrigin");
 	SCHEMA_ADD_FIELD(Vector_t, GetRenderOrigin, "CGameSceneNode->m_vRenderOrigin");
 	SCHEMA_ADD_FIELD(float, GetScale, "CGameSceneNode->m_flScale");

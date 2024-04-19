@@ -52,8 +52,8 @@ bool PATCH::SetupPatches()
 bool PATCH::DoPatches()
 {
 	auto bSuccess = true;
-	//bSuccess &= RotateFuncPatch1.DoPatchNOP();
-	//bSuccess &= RotateFuncPatch2.DoPatchNOP();
+	bSuccess &= RotateFuncPatch1.DoPatchNOP();
+	bSuccess &= RotateFuncPatch2.DoPatchNOP();
 	//bSuccess &= RotateFuncPatch3.DoPatchCustom(0x85, 1);
 	//bSuccess &= RotateFuncPatch3.DoPatchNOP();
 

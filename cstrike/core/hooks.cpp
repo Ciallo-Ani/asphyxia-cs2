@@ -313,6 +313,9 @@ bool CS_FASTCALL H::OnRotateInspectItem(CSkeletonInstance* item, QAngle_t* ang)
 
 void* CS_FASTCALL H::OnRotateInspectItemPre(void* panel)
 {
+	const auto trampoline = hkRotatePreviewItemPre.GetOriginal();
+	auto ret = trampoline(panel);
+
 	void* v5 = *(void**)((char*)panel + 2176);
 	bool* isMouseClicking = (bool*)((char*)panel + 1953);
 	//*isMouseClicking = true;
@@ -323,6 +326,7 @@ void* CS_FASTCALL H::OnRotateInspectItemPre(void* panel)
 	float* nextTick = (float*)((char*)v7 - 16);
 	*nextTick = 0.0;
 	float* nextTick2 = (float*)((char*)v7 + 16);
+	*nextTick2 = 0.0;
 	float* time = (float*)((char*)v7 + 20);
 	float* ang_x = (float*)((char*)v7 - 12);
 	float* ang_y = (float*)((char*)v7 - 8);
@@ -331,6 +335,9 @@ void* CS_FASTCALL H::OnRotateInspectItemPre(void* panel)
 
 	C_BaseEntity* entity = *(C_BaseEntity**)v5;
 	CGameSceneNode* item = entity->GetGameSceneNode();
+	auto& parent = item->GetParent();
+	auto& child = item->GetChild();
+	auto& owner = item->GetOwner();
 	auto& node = item->GetNodeToWorld();
 	auto& vec = node.vecPosition;
 	auto& origin = item->GetAbsOrigin();
@@ -353,14 +360,11 @@ void* CS_FASTCALL H::OnRotateInspectItemPre(void* panel)
 	{
 		vec.y += 1.0;
 	}
-	//MEM::fnRotateInspectItem(item, &item->GetAbsAngleRotation());
-
-	const auto trampoline = hkRotatePreviewItemPre.GetOriginal();
-	//auto ret = trampoline(panel, a2, a3);
+	MEM::fnRotateInspectItem(item, &item->GetAbsAngleRotation());
 	/**ang_x = origin_x;
 	*ang_y = origin_y;*/
 
-	return trampoline(panel);
+	return ret;
 }
 
 
