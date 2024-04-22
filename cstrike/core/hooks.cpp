@@ -123,9 +123,9 @@ bool H::Setup()
 		return false;
 	L_PRINT(LOG_INFO) << CS_XOR("\"DrawObject\" hook has been created");
 
-	/*if (!hkRotatePreviewItem.Create(MEM::FindPattern(CLIENT_DLL, CS_XOR("48 89 5C 24 10 48 89 74 24 18 57 48 83 EC 70 48 8B DA")), reinterpret_cast<void*>(&OnRotateInspectItem)))
+	if (!hkRotatePreviewItem.Create(MEM::FindPattern(CLIENT_DLL, CS_XOR("48 89 5C 24 10 48 89 74 24 18 57 48 83 EC 70 48 8B DA")), reinterpret_cast<void*>(&OnRotateInspectItem)))
 		return false;
-	L_PRINT(LOG_INFO) << CS_XOR("\"RotatePreviewItem\" hook has been created");*/
+	L_PRINT(LOG_INFO) << CS_XOR("\"RotatePreviewItem\" hook has been created");
 
 	if (!hkRotatePreviewItemPre.Create(MEM::FindPattern(CLIENT_DLL, CS_XOR("48 89 5C 24 18 55 56 57 41 56 41 57 48 81 EC 10 01 00 00")), reinterpret_cast<void*>(&OnRotateInspectItemPre)))
 		return false;
@@ -306,7 +306,24 @@ bool CS_FASTCALL H::OnRotateInspectItem(CSkeletonInstance* item, QAngle_t* ang)
 {
 	const auto trampoline = hkRotatePreviewItem.GetOriginal();
 	//auto ret = trampoline(item, ang);
-	
+	auto& node = item->GetNodeToWorld();
+	auto& vec = node.vecPosition;
+	if (GetKeyState(VK_UP) & 0x8000)
+	{
+		vec.x -= 1.0;
+	}
+	else if (GetKeyState(VK_DOWN) & 0x8000)
+	{
+		vec.x += 1.0;
+	}
+	else if (GetKeyState(VK_LEFT) & 0x8000)
+	{
+		vec.y -= 0.5;
+	}
+	else if (GetKeyState(VK_RIGHT) & 0x8000)
+	{
+		vec.y += 0.5;
+	}
 
 	return trampoline(item, ang);
 }
@@ -314,57 +331,59 @@ bool CS_FASTCALL H::OnRotateInspectItem(CSkeletonInstance* item, QAngle_t* ang)
 void* CS_FASTCALL H::OnRotateInspectItemPre(void* panel)
 {
 	const auto trampoline = hkRotatePreviewItemPre.GetOriginal();
-	auto ret = trampoline(panel);
+	//auto ret = trampoline(panel);
 
-	void* v5 = *(void**)((char*)panel + 2176);
-	bool* isMouseClicking = (bool*)((char*)panel + 1953);
-	//*isMouseClicking = true;
-	bool* unk1 = (bool*)((char*)panel + 2024);
-	bool* unk2 = (bool*)((char*)panel + 2025);
+	/* {
+		void* v5 = *(void**)((char*)panel + 2176);
+		bool* isMouseClicking = (bool*)((char*)panel + 1953);
+		//*isMouseClicking = true;
+		bool* unk1 = (bool*)((char*)panel + 2024);
+		bool* unk2 = (bool*)((char*)panel + 2025);
 
-	void* v7 = (void*)((char*)v5 + 80);
-	float* nextTick = (float*)((char*)v7 - 16);
-	*nextTick = 0.0;
-	float* nextTick2 = (float*)((char*)v7 + 16);
-	*nextTick2 = 0.0;
-	float* time = (float*)((char*)v7 + 20);
-	float* ang_x = (float*)((char*)v7 - 12);
-	float* ang_y = (float*)((char*)v7 - 8);
-	float* mouse_x = (float*)((char*)v7 - 56);
-	float* mouse_y = (float*)((char*)v7 - 52);
+		void* v7 = (void*)((char*)v5 + 80);
+		float* nextTick = (float*)((char*)v7 - 16);
+		//*nextTick = 0.0;
+		float* nextTick2 = (float*)((char*)v7 + 16);
+		//*nextTick2 = 0.0;
+		float* time = (float*)((char*)v7 + 20);
+		float* ang_x = (float*)((char*)v7 - 12);
+		*ang_x += 1.0;
+		float* ang_y = (float*)((char*)v7 - 8);
+		*ang_y += 1.0;
+		float* mouse_x = (float*)((char*)v7 - 56);
+		float* mouse_y = (float*)((char*)v7 - 52);
 
-	C_BaseEntity* entity = *(C_BaseEntity**)v5;
-	CGameSceneNode* item = entity->GetGameSceneNode();
-	auto& parent = item->GetParent();
-	auto& child = item->GetChild();
-	auto& owner = item->GetOwner();
-	auto& node = item->GetNodeToWorld();
-	auto& vec = node.vecPosition;
-	auto& origin = item->GetAbsOrigin();
+		C_BaseEntity* entity = *(C_BaseEntity**)v5;
+		CGameSceneNode* item = entity->GetGameSceneNode();
+		auto& parent = item->GetParent();
+		auto& child = item->GetChild();
+		auto& owner = item->GetOwner();
+		auto& node = item->GetNodeToWorld();
+		auto& vec = node.vecPosition;
+		auto& origin = item->GetAbsOrigin();
+		auto& identity = entity->GetIdentity();
+		auto& flag = identity->GetFlags();
 
-	if (GetKeyState(VK_UP) & 0x8000)
-	{
-		vec.x -= 1.0;
-		origin.x -= 1.0;
-	}
-	else if (GetKeyState(VK_DOWN) & 0x8000)
-	{
-		vec.x += 1.0;
-		origin.x += 1.0;
-	}
-	else if (GetKeyState(VK_LEFT) & 0x8000)
-	{
-		vec.y -= 1.0;
-	}
-	else if (GetKeyState(VK_RIGHT) & 0x8000)
-	{
-		vec.y += 1.0;
-	}
-	MEM::fnRotateInspectItem(item, &item->GetAbsAngleRotation());
-	/**ang_x = origin_x;
-	*ang_y = origin_y;*/
+		if (GetKeyState(VK_UP) & 0x8000)
+		{
+			vec.x -= 1.0;
+		}
+		else if (GetKeyState(VK_DOWN) & 0x8000)
+		{
+			vec.x += 1.0;
+		}
+		else if (GetKeyState(VK_LEFT) & 0x8000)
+		{
+			vec.y -= 0.5;
+		}
+		else if (GetKeyState(VK_RIGHT) & 0x8000)
+		{
+			vec.y += 0.5;
+		}
+		MEM::fnRotateInspectItem(item, &item->GetAbsAngleRotation());
+	}*/
 
-	return ret;
+	return trampoline(panel);
 }
 
 

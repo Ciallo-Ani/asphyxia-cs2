@@ -39,10 +39,11 @@
 #ifdef _DEBUG
 #define CS_XOR(STRING) STRING
 #else
-#define JM_XORSTR_DISABLE_AVX_INTRINSICS
-  // used: string encryption
-#include "xorstr.h"
-#define CS_XOR(STRING) xorstr_(STRING)
+#define CS_XOR(STRING) STRING
+//#define JM_XORSTR_DISABLE_AVX_INTRINSICS
+//  // used: string encryption
+//#include "xorstr.h"
+//#define CS_XOR(STRING) xorstr_(STRING)
 #endif
 
 // define to enable logging output to console

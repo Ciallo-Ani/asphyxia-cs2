@@ -42,7 +42,7 @@ bool PATCH::SetupPatches()
 	bool bSuccess = true;
 	bSuccess &= RotateFuncPatch1(CLIENT_DLL, "48 8D 54 24 20 48 8B C8 E8 FC 00 7E FF", 17);
 	bSuccess &= RotateFuncPatch2(CLIENT_DLL, "84 C0 0F 85 A2 01 00 00", 8);
-	//bSuccess &= RotateFuncPatch3(CLIENT_DLL, "48 8B D3 48 8D 8F D4 00 00 00", 23);
+	bSuccess &= RotateFuncPatch3(CLIENT_DLL, "44 38 BD A1 07 00 00 74 05", 1);
 
 	bSuccess &= DoPatches();
 
@@ -54,7 +54,7 @@ bool PATCH::DoPatches()
 	auto bSuccess = true;
 	bSuccess &= RotateFuncPatch1.DoPatchNOP();
 	bSuccess &= RotateFuncPatch2.DoPatchNOP();
-	//bSuccess &= RotateFuncPatch3.DoPatchCustom(0x85, 1);
+	bSuccess &= RotateFuncPatch3.DoPatchCustom(0x75, 7);
 	//bSuccess &= RotateFuncPatch3.DoPatchNOP();
 
 	return bSuccess;

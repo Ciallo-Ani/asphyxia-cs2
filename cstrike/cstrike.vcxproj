@@ -62,13 +62,13 @@
     <ClCompile>
       <PrecompiledHeader>NotUsing</PrecompiledHeader>
       <WarningLevel>Level3</WarningLevel>
-      <PreprocessorDefinitions>NOMINMAX;_DEBUG;_HAS_EXCEPTIONS=0;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <PreprocessorDefinitions>NOMINMAX;CSTRIKE_EXPORTS;_DEBUG;_HAS_EXCEPTIONS=0;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <AdditionalIncludeDirectories>$(SolutionDir)dependencies;$(SolutionDir)dependencies\freetype\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <DebugInformationFormat>ProgramDatabase</DebugInformationFormat>
       <Optimization>Disabled</Optimization>
       <SupportJustMyCode>false</SupportJustMyCode>
       <MinimalRebuild>false</MinimalRebuild>
-      <RuntimeLibrary>MultiThreadedDebug</RuntimeLibrary>
+      <RuntimeLibrary>MultiThreadedDLL</RuntimeLibrary>
       <ExceptionHandling>false</ExceptionHandling>
       <RuntimeTypeInfo>true</RuntimeTypeInfo>
       <MultiProcessorCompilation>true</MultiProcessorCompilation>
@@ -84,12 +84,15 @@
       <ImportLibrary>$(OutDir)$(TargetName).lib</ImportLibrary>
       <EntryPointSymbol>CoreEntryPoint</EntryPointSymbol>
     </Link>
+    <PostBuildEvent>
+      <Command>xcopy $(OutDir)\$(TargetName).dll "E:\Steam\steamapps\common\Counter-Strike Global Offensive\game\csgo\addons\source2mod\bin\win64" /Y</Command>
+    </PostBuildEvent>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
     <ClCompile>
       <PrecompiledHeader>NotUsing</PrecompiledHeader>
       <WarningLevel>Level3</WarningLevel>
-      <PreprocessorDefinitions>NOMINMAX;NDEBUG;_HAS_EXCEPTIONS=0;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <PreprocessorDefinitions>NOMINMAX;CSTRIKE_EXPORTS;NDEBUG;_HAS_EXCEPTIONS=0;_USERDLL;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <AdditionalIncludeDirectories>$(SolutionDir)dependencies;$(SolutionDir)dependencies\freetype\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <DebugInformationFormat>ProgramDatabase</DebugInformationFormat>
       <Optimization>MaxSpeed</Optimization>
@@ -115,6 +118,9 @@
       <ImportLibrary>$(OutDir)$(TargetName).lib</ImportLibrary>
       <EntryPointSymbol>CoreEntryPoint</EntryPointSymbol>
     </Link>
+    <PostBuildEvent>
+      <Command>xcopy $(OutDir)\$(TargetName).dll "E:\Steam\steamapps\common\Counter-Strike Global Offensive\game\csgo\addons\source2mod\bin\win64" /Y</Command>
+    </PostBuildEvent>
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClInclude Include="..\dependencies\imgui\imconfig.h" />
